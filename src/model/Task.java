@@ -1,3 +1,5 @@
+package model;
+
 public class Task {
     protected String title;
     protected String description;
@@ -19,7 +21,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "model.Task{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +

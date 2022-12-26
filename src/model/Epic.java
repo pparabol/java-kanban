@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -18,22 +20,23 @@ public class Epic extends Task {
 
     @Override
     public void changeStatus() {
-        if (subtasks == null) {
+        if (subtasks == null || subtasks.isEmpty()) {
             status = "NEW";
             return;
         }
-        int newTasks = 0;
-        int doneTasks = 0;
-        for (Subtask subtask : subtasks) {
-            if (subtask.status.equals("NEW")) {
-                newTasks ++;
-            } else if (subtask.status.equals("DONE")) {
-                doneTasks ++;
+
+        int tasks = 0;
+        String checker = "";
+
+        for(int i = 0; i < subtasks.size(); i++) {
+            if (subtasks.get(i).status.equals(subtasks.get(subtasks.size() - 1).status)) {
+                tasks++;
+                checker = subtasks.get(i).status;
             }
         }
-        if (newTasks == subtasks.size()) {
-           status = "NEW";
-        } else if (doneTasks == subtasks.size()) {
+        if (tasks == subtasks.size() && checker.equals("NEW")) {
+            status = "NEW";
+        } else if (tasks == subtasks.size() && checker.equals("DONE")) {
             status = "DONE";
         } else {
             status = "IN_PROGRESS";
@@ -42,7 +45,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "model.Epic{" +
                 "subtasks=" + subtasks +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +

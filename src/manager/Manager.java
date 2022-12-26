@@ -1,11 +1,17 @@
+package manager;
+
+import model.Subtask;
+import model.Task;
+import model.Epic;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
     private int id;
-    HashMap<Integer, Object> tasks;
-    HashMap<Integer, Object> epics;
-    HashMap<Integer, Object> subtasks;
+    public HashMap<Integer, Task> tasks;
+    public HashMap<Integer, Task> epics;
+    public HashMap<Integer, Task> subtasks;
 
     public Manager() {
         tasks = new HashMap<>();
@@ -17,8 +23,8 @@ public class Manager {
         return ++id;
     }
 
-   ArrayList<Object> getAllTasks(HashMap<Integer, Object> tasks) {
-        ArrayList<Object> taskList = new ArrayList<>();
+   public ArrayList<Task> getAllTasks(HashMap<Integer, Task> tasks) {
+        ArrayList<Task> taskList = new ArrayList<>();
         if (tasks == null || tasks.isEmpty()) {
             System.out.println("В этой категории нет ни одной задачи");
         } else {
@@ -27,7 +33,7 @@ public class Manager {
         return taskList;
     }
 
-    void removeAllTasks(HashMap<Integer, Object> tasks) {
+    public void removeAllTasks(HashMap<Integer, Task> tasks) {
         if (tasks == null || tasks.isEmpty()) {
             System.out.println("В этой категории нет задач");
         } else {
@@ -36,8 +42,8 @@ public class Manager {
         }
     }
 
-   Object getTaskById(int id) {
-        Object task = null;
+   public Task getTaskById(int id) {
+        Task task = null;
         if (tasks.containsKey(id)) {
             task = tasks.get(id);
         } else if (epics.containsKey(id)) {
@@ -50,7 +56,7 @@ public class Manager {
         return task;
     }
 
-    void createTask(Object task) {
+    public void createTask(Task task) {
         if (task.getClass() == Task.class) {
             tasks.put(getId(), task);
         } else if(task.getClass() == Epic.class) {
@@ -62,35 +68,32 @@ public class Manager {
         }
     }
 
-    void updateTask(Object task) {
-        if (task.getClass() == Task.class) {
-            for (Integer id : tasks.keySet()) {
-                if (tasks.get(id) == task) {
-                    ((Task) task).changeStatus();
-                    tasks.put(id, task);
-                }
+    public void updateTask(Task task) {
+        if (task == null) {
+            System.out.println("Не удалось обновить задачу. Вероятно, задача ещё не создана");
+            return;
+        }
+        for (Integer id : tasks.keySet()) {
+            if (tasks.get(id) == task) {
+                task.changeStatus();
+                tasks.put(id, task);
             }
-        } else if (task.getClass() == Epic.class) {
-            for (Integer id : epics.keySet()) {
-                if (epics.get(id) == task) {
-                    ((Epic) task).changeStatus();
-                    epics.put(id, task);
-                }
+        }
+        for (Integer id : epics.keySet()) {
+            if (epics.get(id) == task) {
+                task.changeStatus();
+                epics.put(id, task);
             }
-        } else if (task.getClass() == Subtask.class) {
-            for (Integer id : subtasks.keySet()) {
-                if (subtasks.get(id) == task) {
-                    ((Subtask) task).changeStatus();
-                    subtasks.put(id, task);
-                }
+        }
+        for (Integer id : subtasks.keySet()) {
+            if (subtasks.get(id) == task) {
+                task.changeStatus();
+                subtasks.put(id, task);
             }
-        } else {
-            System.out.println("Не удалось обновить задачу. " +
-                    "Вероятно, указанная задача не относится ни к одной из категорий");
         }
     }
 
-    void removeTaskById(int id) {
+    public void removeTaskById(int id) {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
         } else if (epics.containsKey(id)) {
@@ -102,7 +105,7 @@ public class Manager {
         }
     }
 
-    ArrayList<Subtask> getSubtasksOfEpic(Epic epic) {
+    public ArrayList<Subtask> getSubtasksOfEpic(Epic epic) {
         ArrayList<Subtask> subtasksOfEpic = new ArrayList<>();
         if (epics.containsValue(epic)) {
             subtasksOfEpic = epic.getSubtasks();
