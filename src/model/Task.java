@@ -1,21 +1,26 @@
 package model;
 
+import util.Status;
+
 public class Task {
     protected String title;
     protected String description;
-    protected String status;
+    protected Status status;
 
     public Task(String title, String description) {
-        status = "NEW";
+        status = Status.NEW;
         this.title = title;
         this.description = description;
     }
 
     public void changeStatus() {
-        if (status.equals("NEW")) {
-            status = "IN_PROGRESS";
-        } else {
-            status = "DONE";
+        switch (status) {
+            case NEW:
+                status = Status.IN_PROGRESS;
+                break;
+            case IN_PROGRESS:
+                status = Status.DONE;
+                break;
         }
     }
 
