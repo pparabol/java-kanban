@@ -2,16 +2,16 @@ package manager;
 
 import model.Task;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 public interface TaskManager {
     int getId();
 
-    ArrayList<Task> getAllTasks();
+    Collection<Task> getAllTasks();
 
-    ArrayList<Task> getAllEpics();
+    Collection<Task> getAllEpics();
 
-    ArrayList<Task> getAllSubtasks();
+    Collection<Task> getAllSubtasks();
 
     void removeAllTasks();
 
@@ -31,5 +31,5 @@ public interface TaskManager {
 
     void removeTask(int id);
 
-    ArrayList<Task> getSubtasksOfEpic(Task task);
+    Collection<Task> getSubtasksOfEpic(Task task);
 }

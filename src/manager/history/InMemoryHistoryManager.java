@@ -2,16 +2,16 @@ package manager.history;
 
 import model.Task;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedList;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final List<Task> history;
+    private final LinkedList<Task> history;
     private final static int MAX_HISTORY_SIZE = 10;
 
     public InMemoryHistoryManager() {
-        history = new ArrayList<>();
+        history = new LinkedList<>();
     }
 
     @Override
@@ -25,7 +25,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public List<Task> getHistory() {
+    public Collection<Task> getHistory() {
         return history;
     }
 }

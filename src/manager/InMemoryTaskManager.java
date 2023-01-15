@@ -4,23 +4,21 @@ import manager.history.HistoryManager;
 import model.Subtask;
 import model.Task;
 import model.Epic;
-import util.Managers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id;
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, Task> epics;
-    private final HashMap<Integer, Task> subtasks;
+    private final Map<Integer, Task> tasks;
+    private final Map<Integer, Task> epics;
+    private final Map<Integer, Task> subtasks;
     public final HistoryManager historyManager;
 
-    public InMemoryTaskManager() {
+    public InMemoryTaskManager(HistoryManager historyManager) {
         tasks = new HashMap<>();
         epics = new HashMap<>();
         subtasks = new HashMap<>();
-        historyManager = Managers.getDefaultHistory();
+        this.historyManager = historyManager;
     }
 
     @Override
@@ -29,7 +27,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
    @Override
-    public ArrayList<Task> getAllTasks() {
+    public Collection<Task> getAllTasks() {
         ArrayList<Task> taskList = new ArrayList<>();
         if (tasks.isEmpty()) {
             System.out.println("Список задач пуст");
@@ -40,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getAllEpics() {
+    public Collection<Task> getAllEpics() {
         ArrayList<Task> taskList = new ArrayList<>();
         if (epics.isEmpty()) {
             System.out.println("Список эпиков пуст");
@@ -51,7 +49,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getAllSubtasks() {
+    public Collection<Task> getAllSubtasks() {
         ArrayList<Task> taskList = new ArrayList<>();
         if (subtasks.isEmpty()) {
             System.out.println("Список подзадач пуст");
@@ -180,9 +178,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getSubtasksOfEpic(Task task) {
+    public Collection<Task> getSubtasksOfEpic(Task task) {
         Epic epic = (Epic) task;
-        ArrayList<Task> subtasksOfEpic = new ArrayList<>();
+        List<Task> subtasksOfEpic = new ArrayList<>();
         if (epics.containsValue(epic)) {
             subtasksOfEpic = epic.getSubtasks();
         } else {
