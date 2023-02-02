@@ -3,14 +3,20 @@ package model;
 import util.Status;
 
 public class Task {
-    protected String title;
-    protected String description;
+    protected final String title;
+    protected final String description;
     protected Status status;
+    protected int id;
 
-    public Task(String title, String description) {
+    public Task(String title, String description, int id) {
         status = Status.NEW;
         this.title = title;
         this.description = description;
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void changeStatus() {
@@ -26,10 +32,11 @@ public class Task {
 
     @Override
     public String toString() {
-        return "model.Task{" +
+        return "Task{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
+                ", status=" + status +
+                ", id=" + id +
                 '}';
     }
 }

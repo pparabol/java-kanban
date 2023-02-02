@@ -128,11 +128,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void createTask(Task task) {
         if (task.getClass() == Task.class) {
-            tasks.put(getId(), task);
+            tasks.put(task.getId(), task);
         } else if(task.getClass() == Epic.class) {
-            epics.put(getId(), task);
+            epics.put(task.getId(), task);
         } else if(task.getClass() == Subtask.class) {
-            subtasks.put(getId(), task);
+            subtasks.put(task.getId(), task);
         } else {
             System.out.println("Невозможно создать задачу. Такая категория не поддерживается");
         }
@@ -168,10 +168,13 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeTask(int id) {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
+            historyManager.remove(id);
         } else if (epics.containsKey(id)) {
             epics.remove(id);
+            historyManager.remove(id);
         } else if (subtasks.containsKey(id)) {
             subtasks.remove(id);
+            historyManager.remove(id);
         } else {
             System.out.printf("Задачи под номером %d нет в списке задач\n", id);
         }

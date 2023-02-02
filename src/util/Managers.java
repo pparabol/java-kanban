@@ -5,7 +5,10 @@ import manager.TaskManager;
 import manager.history.HistoryManager;
 import manager.history.InMemoryHistoryManager;
 
-public abstract class Managers {
+public class Managers {
+
+    private Managers() {
+    }
 
     public static TaskManager getDefault() {
         return new InMemoryTaskManager(getDefaultHistory());

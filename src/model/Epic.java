@@ -8,8 +8,8 @@ import java.util.List;
 public class Epic extends Task {
     private final List<Task> subtasks;
 
-    public Epic(String title, String description) {
-        super(title, description);
+    public Epic(String title, String description, int id) {
+        super(title, description, id);
         subtasks = new ArrayList<>();
     }
 
@@ -48,11 +48,12 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "model.Epic{" +
-                "subtasks=" + subtasks +
+        return "Epic{" +
+                "subtasks.size()=" + subtasks.size() +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
+                ", status=" + status +
+                ", id=" + id +
                 '}';
     }
 }

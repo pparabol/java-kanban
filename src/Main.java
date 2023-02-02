@@ -11,58 +11,43 @@ public class Main {
         TaskManager taskManager = Managers.getDefault();
         InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) taskManager;
 
-        Task task1 = new Task("Кино", "Купить билеты");
-        Task task2 = new Task("Проект", "Написать рабочий код");
+        Task task1 = new Task("Кино", "Купить билеты", inMemoryTaskManager.getId());
+        Task task2 = new Task("Проект", "Написать рабочий код", inMemoryTaskManager.getId());
         inMemoryTaskManager.createTask(task1);
         inMemoryTaskManager.createTask(task2);
 
-        Epic epic1 = new Epic("Важный эпик", "Много дел");
-        Subtask subtask1 = new Subtask("Кот", "Покормить кота");
-        Subtask subtask2 = new Subtask("Пёс", "Погладить собаку");
+        Epic epic1 = new Epic("Важный эпик", "Много дел", inMemoryTaskManager.getId());
+        Subtask subtask1 = new Subtask("Кот", "Покормить кота", inMemoryTaskManager.getId(), epic1);
+        Subtask subtask2 = new Subtask("Пёс", "Погладить собаку", inMemoryTaskManager.getId(), epic1);
+        Subtask subtask3 = new Subtask("Суши", "Заказать доставку", inMemoryTaskManager.getId(), epic1);
         epic1.setSubtasks(subtask1);
         epic1.setSubtasks(subtask2);
+        epic1.setSubtasks(subtask3);
         inMemoryTaskManager.createTask(epic1);
         inMemoryTaskManager.createTask(subtask1);
         inMemoryTaskManager.createTask(subtask2);
-
-        Epic epic2 = new Epic("Очень важный эпик", "Куча дел");
-        Subtask subtask3 = new Subtask("Суши", "Заказать доставку");
-        epic2.setSubtasks(subtask3);
-        inMemoryTaskManager.createTask(epic2);
         inMemoryTaskManager.createTask(subtask3);
 
-        System.out.println(inMemoryTaskManager.getAllTasks());
-        System.out.println(inMemoryTaskManager.getAllEpics());
-        System.out.println(inMemoryTaskManager.getAllSubtasks());
-
-        inMemoryTaskManager.updateTask(task1);
-        inMemoryTaskManager.updateTask(subtask1);
-        inMemoryTaskManager.updateTask(epic1);
-        inMemoryTaskManager.updateTask(subtask3);
-        inMemoryTaskManager.updateTask(epic2);
-
-        System.out.println(inMemoryTaskManager.getAllTasks());
-        System.out.println(inMemoryTaskManager.getAllEpics());
-        System.out.println(inMemoryTaskManager.getAllSubtasks());
+        Epic epic2 = new Epic("Очень важный эпик", "Куча дел", inMemoryTaskManager.getId());
+        inMemoryTaskManager.createTask(epic2);
 
         System.out.println(inMemoryTaskManager.getSubtask(5));
         System.out.println(inMemoryTaskManager.getTask(2));
         System.out.println(inMemoryTaskManager.getEpic(3));
-        inMemoryTaskManager.getTask(10);
+        System.out.println(inMemoryTaskManager.getSubtask(5));
+        System.out.println(inMemoryTaskManager.getTask(2));
 
         System.out.println(inMemoryTaskManager.historyManager.getHistory());
 
-        inMemoryTaskManager.getSubtask(5);
-        inMemoryTaskManager.getTask(2);
         inMemoryTaskManager.getEpic(3);
+        inMemoryTaskManager.getSubtask(4);
 
         System.out.println(inMemoryTaskManager.historyManager.getHistory());
 
-        inMemoryTaskManager.removeTask(1);
-        inMemoryTaskManager.removeTask(3);
+        inMemoryTaskManager.removeTask(5);
+        inMemoryTaskManager.removeTask(4);
 
-        inMemoryTaskManager.removeAllTasks();
-        System.out.println(inMemoryTaskManager.getAllTasks());
+        System.out.println(inMemoryTaskManager.historyManager.getHistory());
 
     }
 }
