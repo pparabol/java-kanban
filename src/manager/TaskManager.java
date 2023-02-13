@@ -19,11 +19,7 @@ public interface TaskManager {
 
     void removeAllSubtasks();
 
-    Task getTask(int id);
-
-    Task getEpic(int id);
-
-    Task getSubtask(int id);
+    Task getTaskById(int id);
 
     void createTask(Task task);
 

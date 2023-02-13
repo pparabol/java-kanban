@@ -40,7 +40,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         private Node<T> tail;
         private int size = 0;
 
-        public Node<T> linkLast(T element) {
+        private Node<T> linkLast(T element) {
             final Node<T> newNode = new Node<>(element);
             if (this.head == null) {
                 this.head = newNode;
@@ -54,7 +54,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             return newNode;
         }
 
-        public Collection<T> getTasks() {
+        private Collection<T> getTasks() {
             List<T> result = new ArrayList<>(size);
             if (this.head != null) {
                 Node<T> currentNode = this.head;
@@ -62,13 +62,11 @@ public class InMemoryHistoryManager implements HistoryManager {
                     result.add(currentNode.getData());
                     currentNode = currentNode.getNext();
                 }
-            } else {
-                System.out.println("Список пуст");
             }
             return result;
         }
 
-        public void removeNode(Node<T> node) {
+        private void removeNode(Node<T> node) {
             if (this.head == null || node == null) {
                 System.out.println("Невозможно удалить узел");
                 return;

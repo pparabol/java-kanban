@@ -9,9 +9,9 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id;
-    private final Map<Integer, Task> tasks;
-    private final Map<Integer, Task> epics;
-    private final Map<Integer, Task> subtasks;
+    protected final Map<Integer, Task> tasks;
+    protected final Map<Integer, Task> epics;
+    protected final Map<Integer, Task> subtasks;
     public final HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
@@ -90,37 +90,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
    @Override
-   public Task getTask(int id) {
+   public Task getTaskById(int id) {
         Task task = null;
         if (tasks.containsKey(id)) {
             task = tasks.get(id);
             historyManager.add(task);
-        } else {
-            System.out.printf("Задачи под номером %d нет в списке задач\n", id);
-        }
-        return task;
-    }
-
-    @Override
-    public Task getEpic(int id) {
-        Task task = null;
-        if (epics.containsKey(id)) {
+        } else if (epics.containsKey(id)) {
             task = epics.get(id);
             historyManager.add(task);
-        } else {
-            System.out.printf("Эпика под номером %d нет в списке задач\n", id);
-        }
-        return task;
-    }
-
-    @Override
-    public Task getSubtask(int id) {
-        Task task = null;
-        if (subtasks.containsKey(id)) {
+        } else if (subtasks.containsKey(id)) {
             task = subtasks.get(id);
             historyManager.add(task);
         } else {
-            System.out.printf("Подзадачи под номером %d нет в списке задач\n", id);
+            System.out.printf("Задачи под номером %d нет в списке задач\n", id);
         }
         return task;
     }
