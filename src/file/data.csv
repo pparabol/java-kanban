@@ -7,4 +7,4 @@ id,type,name,status,description,epic
 5,SUBTASK,Пёс,NEW,Погладить собаку,3
 6,SUBTASK,Суши,NEW,Заказать доставку,3
 
-5,3,4
+5,3,4,1
