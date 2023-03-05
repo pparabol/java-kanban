@@ -3,16 +3,65 @@ package model;
 import util.Status;
 import util.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
     private final List<Task> subtasks;
+    private LocalDateTime endTime;
 
     public Epic(String title, String description, int id) {
         super(title, description, id);
         subtasks = new ArrayList<>();
         type = TaskType.EPIC;
+    }
+
+    @Override
+    public Duration getDuration() {
+        this.duration = Duration.ofMinutes(0);
+        if (!subtasks.isEmpty()) {
+            subtasks.forEach(subtask -> this.duration = duration.plus(subtask.getDuration()));
+        }
+        return duration;
+    }
+
+    @Override
+    public LocalDateTime getStartTime() {
+        if (subtasks.isEmpty()) return this.startTime = null;
+
+        int counter = 0;
+        for (Task subtask : subtasks) {
+            if (subtask.getStartTime() == null) counter++;
+        }
+
+        if (counter >= 1) return this.startTime = null;
+
+        LocalDateTime start = subtasks.get(0).getStartTime();
+        for (int i = 1; i < subtasks.size(); i++) {
+            LocalDateTime checker = subtasks.get(i).getStartTime();
+            if (checker.isBefore(start)) {
+                start = checker;
+            }
+        }
+        return this.startTime = start;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        if (subtasks.isEmpty()) {
+            return this.endTime = null;
+        }
+
+        LocalDateTime end = subtasks.get(0).getEndTime();
+        for (int i = 1; i < subtasks.size(); i++) {
+            LocalDateTime checker = subtasks.get(i).getEndTime();
+            if (checker.isAfter(end)) {
+                end = checker;
+            }
+        }
+        return this.endTime = end;
     }
 
     public void setSubtasks(Task subtask) {
@@ -56,6 +105,8 @@ public class Epic extends Task {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 ", id=" + id +
+                ", startTime=" + (startTime == null ? "null" : startTime.format(DATE_TIME_FORMATTER)) +
+                ", duration=" + duration.toMinutes() +
                 '}';
     }
 }

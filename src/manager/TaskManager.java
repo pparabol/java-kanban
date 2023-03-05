@@ -7,6 +7,8 @@ import java.util.Collection;
 public interface TaskManager {
     int getId();
 
+    Collection<Task> getPrioritizedTasks();
+
     Collection<Task> getAllTasks();
 
     Collection<Task> getAllEpics();

@@ -30,7 +30,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public Collection<Task> getHistory() {
+    public List<Task> getHistory() {
         return history.getTasks();
     }
 
@@ -54,7 +54,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             return newNode;
         }
 
-        private Collection<T> getTasks() {
+        private List<T> getTasks() {
             List<T> result = new ArrayList<>(size);
             if (this.head != null) {
                 Node<T> currentNode = this.head;

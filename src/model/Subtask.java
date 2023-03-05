@@ -2,6 +2,8 @@ package model;
 
 import util.TaskType;
 
+import java.time.LocalDateTime;
+
 public class Subtask extends Task {
 
     private final Task epic;
@@ -11,6 +13,18 @@ public class Subtask extends Task {
         this.epic = epic;
         epic.setSubtasks(this);
         type = TaskType.SUBTASK;
+    }
+
+    @Override
+    public void setDuration(long minutes) {
+        super.setDuration(minutes);
+        epic.getDuration();
+    }
+
+    @Override
+    public void setStartTime(LocalDateTime startTime) {
+        super.setStartTime(startTime);
+        epic.getStartTime();
     }
 
     public int getEpicId() {
@@ -31,6 +45,8 @@ public class Subtask extends Task {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 ", id=" + id +
+                ", startTime=" + (startTime == null ? "null" : startTime.format(DATE_TIME_FORMATTER)) +
+                ", duration=" + duration.toMinutes() +
                 '}';
     }
 }

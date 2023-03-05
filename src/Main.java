@@ -3,6 +3,7 @@ import manager.TaskManager;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import util.FileManagerLoader;
 import util.Managers;
 
 public class Main {
@@ -26,10 +27,11 @@ public class Main {
         fileManager.getTaskById(3);
         fileManager.getTaskById(4);
 
-        FileBackedTasksManager fM = (FileBackedTasksManager) Managers.loadFromFile("src/file/data.csv");
+        FileBackedTasksManager fM = FileManagerLoader.loadFromFile("src/file/data.csv");
 
         System.out.println(fM.getTaskById(1));
 
         System.out.println(fM.historyManager.getHistory());
+
     }
 }

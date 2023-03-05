@@ -9,8 +9,11 @@ import util.Status;
 import util.TaskType;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static model.Task.DATE_TIME_FORMATTER;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final File file;
@@ -22,7 +25,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() throws ManagerSaveException {
         try (FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write("id,type,name,status,description,epic");
+            fileWriter.write("id,type,name,status,description,start,duration,epic");
 
            List<Task> createdTasks = new ArrayList<>();
            createdTasks.addAll(tasks.values());
@@ -48,8 +51,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String name = task.getTitle();
         String status = task.getStatus().toString();
         String description = task.getDescription();
+        String start = task.getStartTime() == null ? "Not stated" : task.getStartTime().format(DATE_TIME_FORMATTER);
+        long duration = task.getDuration().toMinutes();
 
-        String result = String.format("\n%d,%s,%s,%s,%s", id, type, name, status, description);
+        String result = String.format("\n%d,%s,%s,%s,%s,%s,%d", id, type, name, status, description, start, duration);
 
         if (task instanceof Subtask) {
             int epicId = ((Subtask) task).getEpicId();
@@ -66,6 +71,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String title = data[2];
         Status status = Status.valueOf(data[3]);
         String description = data[4];
+        long duration = Long.parseLong(data[6]);
 
         Task task = null;
 
@@ -77,12 +83,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 task = new Epic(title, description, id);
                 break;
             case SUBTASK:
-                int epicId = Integer.parseInt(data[5]);
+                int epicId = Integer.parseInt(data[7]);
                 Task epic = epics.get(epicId);
                 task = new Subtask(title, description, id, (Epic) epic);
                 break;
         }
         task.setStatus(status);
+        task.setDuration(duration);
+
+        if (!data[5].equals("Not stated")) {
+            LocalDateTime start = LocalDateTime.parse(data[5], DATE_TIME_FORMATTER);
+            task.setStartTime(start);
+        }
+
         return task;
     }
 

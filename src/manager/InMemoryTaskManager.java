@@ -5,6 +5,8 @@ import model.Subtask;
 import model.Task;
 import model.Epic;
 
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -13,17 +15,32 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> epics;
     protected final Map<Integer, Task> subtasks;
     public final HistoryManager historyManager;
+    private final Set<Task> prioritizedTasks;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         tasks = new HashMap<>();
         epics = new HashMap<>();
         subtasks = new HashMap<>();
         this.historyManager = historyManager;
+        prioritizedTasks = new TreeSet<>((t1, t2) -> {
+            if (t1.getStartTime() != null && t2.getStartTime() != null) {
+                return t1.getStartTime().compareTo(t2.getStartTime());
+            } else if (t1.getStartTime() == null && t2.getStartTime() != null) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
     }
 
     @Override
     public int getId() {
         return ++id;
+    }
+
+    @Override
+    public Set<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
     }
 
    @Override
@@ -64,8 +81,8 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.isEmpty()) {
             System.out.println("В этой категории нет задач");
         } else {
+            prioritizedTasks.removeAll(tasks.values());
             tasks.clear();
-            System.out.println("Все задачи удалены");
         }
     }
 
@@ -74,8 +91,8 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.isEmpty()) {
             System.out.println("В этой категории нет задач");
         } else {
+            prioritizedTasks.removeAll(epics.values());
             epics.clear();
-            System.out.println("Все эпики удалены");
         }
     }
 
@@ -84,14 +101,14 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.isEmpty()) {
             System.out.println("В этой категории нет задач");
         } else {
+            prioritizedTasks.removeAll(subtasks.values());
             subtasks.clear();
-            System.out.println("Все подзадачи удалены");
         }
     }
 
    @Override
-   public Task getTaskById(int id) {
-        Task task = null;
+   public Task getTaskById(int id) throws NoSuchElementException {
+        Task task;
         if (tasks.containsKey(id)) {
             task = tasks.get(id);
             historyManager.add(task);
@@ -102,76 +119,100 @@ public class InMemoryTaskManager implements TaskManager {
             task = subtasks.get(id);
             historyManager.add(task);
         } else {
-            System.out.printf("Задачи под номером %d нет в списке задач\n", id);
+            throw new NoSuchElementException("Задачи под номером " + id + " нет в списке задач");
         }
         return task;
     }
 
     @Override
-    public void createTask(Task task) {
+    public void createTask(Task task) throws NullPointerException, DateTimeException {
+        if (task == null) {
+            throw new NullPointerException("Задача не найдена");
+        }
+
         if (task.getClass() == Task.class) {
             tasks.put(task.getId(), task);
         } else if(task.getClass() == Epic.class) {
             epics.put(task.getId(), task);
         } else if(task.getClass() == Subtask.class) {
             subtasks.put(task.getId(), task);
-        } else {
-            System.out.println("Невозможно создать задачу. Такая категория не поддерживается");
         }
+
+        if (!prioritizedTasks.isEmpty() && task.getStartTime() != null) {
+            if (isOverlapping(task)) {
+                throw new DateTimeException("Задача пересекается по времени выполнения с одной из созданных");
+            }
+        }
+        prioritizedTasks.add(task);
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws NullPointerException {
         if (task == null) {
-            System.out.println("Не удалось обновить задачу. Вероятно, задача ещё не создана");
-            return;
+            throw new NullPointerException("Задача не найдена");
         }
-        for (Integer id : tasks.keySet()) {
-            if (tasks.get(id) == task) {
-                task.changeStatus();
-                tasks.put(id, task);
-            }
+        prioritizedTasks.remove(task);
+        int id = task.getId();
+        task.changeStatus();
+        if (tasks.containsKey(id)) {
+            tasks.put(id, task);
+        } else if (epics.containsKey(id)) {
+            epics.put(id, task);
+        } else if (subtasks.containsKey(id)) {
+            subtasks.put(id, task);
         }
-        for (Integer id : epics.keySet()) {
-            if (epics.get(id) == task) {
-                task.changeStatus();
-                epics.put(id, task);
-            }
-        }
-        for (Integer id : subtasks.keySet()) {
-            if (subtasks.get(id) == task) {
-                task.changeStatus();
-                subtasks.put(id, task);
-            }
-        }
+        prioritizedTasks.add(task);
     }
 
     @Override
-    public void removeTask(int id) {
+    public void removeTask(int id) throws NoSuchElementException {
+        Task task;
         if (tasks.containsKey(id)) {
+            task = tasks.get(id);
+            prioritizedTasks.remove(task);
             tasks.remove(id);
             historyManager.remove(id);
         } else if (epics.containsKey(id)) {
+            task = epics.get(id);
+            prioritizedTasks.remove(task);
             epics.remove(id);
             historyManager.remove(id);
         } else if (subtasks.containsKey(id)) {
+            task = subtasks.get(id);
+            prioritizedTasks.remove(task);
             subtasks.remove(id);
             historyManager.remove(id);
         } else {
-            System.out.printf("Задачи под номером %d нет в списке задач\n", id);
+            throw new NoSuchElementException("Задачи под номером " + id + " нет в списке задач");
         }
     }
 
     @Override
-    public Collection<Task> getSubtasksOfEpic(Task task) {
+    public Collection<Task> getSubtasksOfEpic(Task task) throws NoSuchElementException {
         Epic epic = (Epic) task;
-        List<Task> subtasksOfEpic = new ArrayList<>();
+        List<Task> subtasksOfEpic;
         if (epics.containsValue(epic)) {
             subtasksOfEpic = epic.getSubtasks();
         } else {
-            System.out.println("Такого эпика нет в списке задач");
+             throw new NoSuchElementException("Такого эпика нет в списке задач");
         }
         return subtasksOfEpic;
     }
 
+    private boolean isOverlapping(Task task) {
+        boolean isOverlapping = false;
+        LocalDateTime startOfTask = task.getStartTime();
+        LocalDateTime endOfTask = task.getEndTime();
+        for (Task t : prioritizedTasks) {
+            if (t.getStartTime() == null) continue;
+            LocalDateTime startOfT = t.getStartTime();
+            LocalDateTime endOfT = t.getEndTime();
+            boolean isCovering = startOfT.isBefore(startOfTask) && endOfT.isAfter(endOfTask);
+            boolean isOverlappingByEnd = startOfT.isBefore(startOfTask) && endOfT.isAfter(startOfTask);
+            boolean isOverlappingByStart = startOfT.isBefore(endOfTask) && endOfT.isAfter(endOfTask);
+            boolean isWithin = startOfT.isAfter(startOfTask) && endOfT.isBefore(endOfTask);
+            isOverlapping = isCovering || isOverlappingByEnd || isOverlappingByStart || isWithin;
+        }
+        return isOverlapping;
+    }
 }
