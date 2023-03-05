@@ -1,4 +1,4 @@
-package manager.test;
+package test;
 
 import manager.TaskManager;
 import model.Epic;
@@ -33,22 +33,26 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task.setStartTime(LocalDateTime.of(2023, 7, 26, 17,25));
         task.setDuration(60);
         manager.createTask(task);
-        Collection<Task> tasks = manager.getAllTasks();
+        final Collection<Task> tasks = manager.getAllTasks();
 
-        assertNotNull(tasks, "Задачи не возвращаются");
-        assertEquals(1, tasks.size());
-        assertTrue(tasks.contains(task));
+        assertAll(
+                () -> assertNotNull(tasks, "Задачи не возвращаются"),
+                () -> assertEquals(1, tasks.size()),
+                () -> assertTrue(tasks.contains(task))
+        );
     }
 
     @Test
     void getAllEpics() {
         Epic epic = new Epic("Epic", "EpicGetAllEpics", manager.getId());
         manager.createTask(epic);
-        Collection<Task> epics = manager.getAllEpics();
+        final Collection<Task> epics = manager.getAllEpics();
 
-        assertNotNull(epics, "Задачи не возвращаются");
-        assertEquals(1, epics.size());
-        assertTrue(epics.contains(epic));
+        assertAll(
+                () -> assertNotNull(epics, "Задачи не возвращаются"),
+                () -> assertEquals(1, epics.size()),
+                () -> assertTrue(epics.contains(epic))
+        );
     }
 
     @Test
@@ -61,11 +65,13 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(epic.getId(), subtask.getEpicId());
 
-        Collection<Task> subtasks = manager.getAllSubtasks();
+        final Collection<Task> subtasks = manager.getAllSubtasks();
 
-        assertNotNull(subtasks, "Задачи не возвращаются");
-        assertEquals(1, subtasks.size());
-        assertTrue(subtasks.contains(subtask));
+        assertAll(
+                () -> assertNotNull(subtasks, "Задачи не возвращаются"),
+                () -> assertEquals(1, subtasks.size()),
+                () -> assertTrue(subtasks.contains(subtask))
+        );
     }
 
     @Test
@@ -127,14 +133,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.createTask(epic);
         manager.createTask(subtask);
 
-        assertEquals(subtask.getStartTime(), epic.getStartTime());
-        assertEquals(subtask.getDuration(), epic.getDuration());
+        assertAll("Время выполнения должно совпадать",
+                () -> assertEquals(subtask.getStartTime(), epic.getStartTime()),
+                () -> assertEquals(subtask.getDuration(), epic.getDuration())
+        );
 
-        Collection<Task> epics = manager.getAllEpics();
-        Collection<Task> subtasks = manager.getAllSubtasks();
+        final Collection<Task> epics = manager.getAllEpics();
+        final Collection<Task> subtasks = manager.getAllSubtasks();
 
-        assertTrue(epics.contains(epic));
-        assertTrue(subtasks.contains(subtask));
+        assertAll("Менеджер должен вернуть созданные задачи",
+                () -> assertTrue(epics.contains(epic)),
+                () -> assertTrue(subtasks.contains(subtask))
+        );
 
         Task task = new Task("Task", "TaskValidateOverlapping", manager.getId());
         task.setStartTime(LocalDateTime.of(2023, 3, 3, 15, 0));
@@ -214,10 +224,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.createTask(task1);
         manager.createTask(task2);
 
-        TreeSet<Task> prioritizedTasks = (TreeSet<Task>) manager.getPrioritizedTasks();
+        final TreeSet<Task> prioritizedTasks = (TreeSet<Task>) manager.getPrioritizedTasks();
 
-        assertNotNull(prioritizedTasks, "Задачи не возвращаются");
-        assertEquals(task1, prioritizedTasks.first(), "Неверный порядок задач");
-        assertEquals(task2, prioritizedTasks.last(), "Неверный порядок задач");
+        assertAll(
+                () -> assertNotNull(prioritizedTasks, "Задачи не возвращаются"),
+                () -> assertEquals(task1, prioritizedTasks.first(), "Неверный порядок задач"),
+                () -> assertEquals(task2, prioritizedTasks.last(), "Неверный порядок задач")
+        );
     }
 }

@@ -1,4 +1,4 @@
-package manager.test;
+package test;
 
 import exception.ManagerSaveException;
 import manager.FileBackedTasksManager;
@@ -41,14 +41,18 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         manager.getTaskById(id);
 
         FileBackedTasksManager fM = FileManagerLoader.loadFromFile("src/file/data.csv");
-        Task loadedEpic = fM.getTaskById(id);
-        Collection<Task> history = fM.historyManager.getHistory();
+        final Task loadedEpic = fM.getTaskById(id);
+        final Collection<Task> history = fM.historyManager.getHistory();
 
-        assertNotNull(loadedEpic, "Задача не найдена");
-        assertEquals(epic, loadedEpic, "Задачи не совпадают");
-        assertTrue(epic.getSubtasks().isEmpty(), "Загружаются лишние подазадачи");
+        assertAll(
+                () -> assertNotNull(loadedEpic, "Задача не найдена"),
+                () -> assertEquals(epic, loadedEpic, "Задачи не совпадают"),
+                () -> assertTrue(epic.getSubtasks().isEmpty(), "Загружаются лишние подазадачи")
+        );
 
-        assertFalse(history.isEmpty(), "История не загружается");
-        assertEquals(1, history.size());
+        assertAll(
+                () -> assertFalse(history.isEmpty(), "История не загружается"),
+                () -> assertEquals(1, history.size(), "Неверный размер истории")
+        );
     }
 }

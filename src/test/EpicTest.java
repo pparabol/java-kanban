@@ -1,4 +1,4 @@
-package model.test;
+package test;
 
 import manager.TaskManager;
 import model.Epic;
@@ -27,18 +27,20 @@ class EpicTest {
 
     @Test
     void shouldBeNewWhenSubtasksListIsEmpty() {
-        List<Task> subtasks = epic.getSubtasks();
-        Status expectedStatus = Status.NEW;
+        final List<Task> subtasks = epic.getSubtasks();
+        final Status expectedStatus = Status.NEW;
 
-        assertTrue(subtasks.isEmpty(), "Список не пуст");
-        assertEquals(expectedStatus, epic.getStatus(), "Неверный статус эпика");
+        assertAll(
+                () -> assertTrue(subtasks.isEmpty(), "Список не пуст"),
+                () -> assertEquals(expectedStatus, epic.getStatus(), "Неверный статус эпика")
+        );
     }
 
     @Test
     void shouldBeNewWhenSubtasksAreNew() {
-        List<Subtask> subs = List.of(new Subtask("Subtask1", "subtask description", manager.getId(), epic),
-                new Subtask("Subtask2", "subtask description", manager.getId(), epic),
-                new Subtask("Subtask3", "subtask description", manager.getId(), epic)
+        List<Subtask> subs = List.of(new Subtask("Subtask1", "description", manager.getId(), epic),
+                new Subtask("Subtask2", "description", manager.getId(), epic),
+                new Subtask("Subtask3", "description", manager.getId(), epic)
         );
         Status expectedStatus = Status.NEW;
         List<Task> subtasks = epic.getSubtasks();
@@ -52,9 +54,9 @@ class EpicTest {
 
     @Test
     void shouldBeDoneWhenSubtasksAreDone() {
-        List<Subtask> subs = List.of(new Subtask("Subtask1", "subtask description", manager.getId(), epic),
-                new Subtask("Subtask2", "subtask description", manager.getId(), epic),
-                new Subtask("Subtask3", "subtask description", manager.getId(), epic)
+        List<Subtask> subs = List.of(new Subtask("Subtask1", "description", manager.getId(), epic),
+                new Subtask("Subtask2", "description", manager.getId(), epic),
+                new Subtask("Subtask3", "description", manager.getId(), epic)
         );
         Status expectedStatus = Status.DONE;
 
@@ -69,23 +71,25 @@ class EpicTest {
 
     @Test
     void shouldBeInProgressWhenSubtasksAreNewAndDone() {
-        Subtask sub1 = new Subtask("Subtask1", "subtask description", manager.getId(), epic);
-        Subtask sub2 = new Subtask("Subtask1", "subtask description", manager.getId(), epic);
-        Status expectedStatus = Status.IN_PROGRESS;
+        Subtask sub1 = new Subtask("Subtask1", "description", manager.getId(), epic);
+        Subtask sub2 = new Subtask("Subtask1", "description", manager.getId(), epic);
+        final Status expectedStatus = Status.IN_PROGRESS;
 
         sub1.changeStatus();
         sub1.changeStatus();
 
-        assertEquals(Status.DONE, sub1.getStatus(), "Неверный статус подзачадачи");
-        assertEquals(Status.NEW, sub2.getStatus(), "Неверный статус подзачадачи");
-        assertEquals(expectedStatus, epic.getStatus(), "Неверный статус эпика");
+        assertAll(
+                () -> assertEquals(Status.DONE, sub1.getStatus(), "Неверный статус подзачадачи"),
+                () -> assertEquals(Status.NEW, sub2.getStatus(), "Неверный статус подзачадачи"),
+                () -> assertEquals(expectedStatus, epic.getStatus(), "Неверный статус эпика")
+        );
     }
 
     @Test
     void shouldBeInProgressWhenSubtasksAreInProgress() {
-        List<Subtask> subs = List.of(new Subtask("Subtask1", "subtask description", manager.getId(), epic),
-                new Subtask("Subtask2", "subtask description", manager.getId(), epic),
-                new Subtask("Subtask3", "subtask description", manager.getId(), epic));
+        List<Subtask> subs = List.of(new Subtask("Subtask1", "description", manager.getId(), epic),
+                new Subtask("Subtask2", "description", manager.getId(), epic),
+                new Subtask("Subtask3", "description", manager.getId(), epic));
         Status expectedStatus = Status.IN_PROGRESS;
 
         subs.forEach(subtask -> {
@@ -98,16 +102,18 @@ class EpicTest {
 
     @Test
     void shouldCalculateStartTimeAndEndTimeAndDuration() {
-        Subtask sub1 = new Subtask("Subtask1", "subtask description", manager.getId(), epic);
-        Subtask sub2 = new Subtask("Subtask1", "subtask description", manager.getId(), epic);
+        Subtask sub1 = new Subtask("Subtask1", "description", manager.getId(), epic);
+        Subtask sub2 = new Subtask("Subtask1", "description", manager.getId(), epic);
         sub1.setStartTime(LocalDateTime.now());
         sub1.setDuration(60);
         sub2.setStartTime(LocalDateTime.of(2024, 5, 25, 5, 45));
         sub2.setDuration(60);
 
-        assertEquals(sub1.getStartTime(), epic.getStartTime(), "Начало рассчитано неверно");
-        assertEquals(sub2.getEndTime(), epic.getEndTime(), "Завершение рассчитано неверно");
-        assertEquals(120, epic.getDuration().toMinutes(), "Продолжительность рассчитана неверно");
+        assertAll(
+                () -> assertEquals(sub1.getStartTime(), epic.getStartTime(), "Начало рассчитано неверно"),
+                () -> assertEquals(sub2.getEndTime(), epic.getEndTime(), "Завершение рассчитано неверно"),
+                () -> assertEquals(120, epic.getDuration().toMinutes(),
+                        "Продолжительность рассчитана неверно")
+        );
     }
-
 }
