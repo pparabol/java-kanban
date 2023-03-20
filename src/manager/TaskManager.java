@@ -9,11 +9,11 @@ public interface TaskManager {
 
     Collection<Task> getPrioritizedTasks();
 
-    Collection<Task> getAllTasks();
+    Collection<Task> getTasks();
 
-    Collection<Task> getAllEpics();
+    Collection<Task> getEpics();
 
-    Collection<Task> getAllSubtasks();
+    Collection<Task> getSubtasks();
 
     void removeAllTasks();
 
@@ -29,5 +29,5 @@ public interface TaskManager {
 
     void removeTask(int id);
 
-    Collection<Task> getSubtasksOfEpic(Task task);
+    Collection<Task> getSubtasksOfEpic(int id);
 }

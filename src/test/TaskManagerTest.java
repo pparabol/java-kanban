@@ -28,12 +28,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getAllTasks() {
+    void getTasks() {
         Task task = new Task("Task", "TaskGetAllTasks", manager.getId());
         task.setStartTime(LocalDateTime.of(2023, 7, 26, 17,25));
         task.setDuration(60);
         manager.createTask(task);
-        final Collection<Task> tasks = manager.getAllTasks();
+        final Collection<Task> tasks = manager.getTasks();
 
         assertAll(
                 () -> assertNotNull(tasks, "Задачи не возвращаются"),
@@ -43,10 +43,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getAllEpics() {
+    void getEpics() {
         Epic epic = new Epic("Epic", "EpicGetAllEpics", manager.getId());
         manager.createTask(epic);
-        final Collection<Task> epics = manager.getAllEpics();
+        final Collection<Task> epics = manager.getEpics();
 
         assertAll(
                 () -> assertNotNull(epics, "Задачи не возвращаются"),
@@ -56,7 +56,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getAllSubtasks() {
+    void getSubtasks() {
         Epic epic = new Epic("Epic", "EpicGetAllSubtasks", manager.getId());
         Subtask subtask = new Subtask("Subtask", "SubtaskGetAllSubtasks", manager.getId(), epic);
         subtask.setStartTime(LocalDateTime.of(2024, 4, 4, 14,4));
@@ -65,7 +65,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(epic.getId(), subtask.getEpicId());
 
-        final Collection<Task> subtasks = manager.getAllSubtasks();
+        final Collection<Task> subtasks = manager.getSubtasks();
 
         assertAll(
                 () -> assertNotNull(subtasks, "Задачи не возвращаются"),
@@ -78,22 +78,22 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void removeAllTasks() {
         manager.createTask(new Task("Task", "TaskRemoveAllTasks", manager.getId()));
 
-        assertFalse(manager.getAllTasks().isEmpty());
+        assertFalse(manager.getTasks().isEmpty());
 
         manager.removeAllTasks();
 
-        assertTrue(manager.getAllTasks().isEmpty(), "Задачи не удаляются");
+        assertTrue(manager.getTasks().isEmpty(), "Задачи не удаляются");
     }
 
     @Test
     void removeAllEpics() {
         manager.createTask(new Epic("Epic", "EpicRemoveAllEpics", manager.getId()));
 
-        assertFalse(manager.getAllEpics().isEmpty());
+        assertFalse(manager.getEpics().isEmpty());
 
         manager.removeAllEpics();
 
-        assertTrue(manager.getAllEpics().isEmpty(), "Задачи не удаляются");
+        assertTrue(manager.getEpics().isEmpty(), "Задачи не удаляются");
     }
 
     @Test
@@ -101,11 +101,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic = new Epic("Epic", "EpicRemoveAllSubtasks", manager.getId());
         manager.createTask(new Subtask("Subtask", "SubtaskRemoveAllSubtasks", manager.getId(), epic));
 
-        assertFalse(manager.getAllSubtasks().isEmpty());
+        assertFalse(manager.getSubtasks().isEmpty());
 
         manager.removeAllSubtasks();
 
-        assertTrue(manager.getAllSubtasks().isEmpty(), "Задачи не удаляются");
+        assertTrue(manager.getSubtasks().isEmpty(), "Задачи не удаляются");
     }
 
     @Test
@@ -138,8 +138,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 () -> assertEquals(subtask.getDuration(), epic.getDuration())
         );
 
-        final Collection<Task> epics = manager.getAllEpics();
-        final Collection<Task> subtasks = manager.getAllSubtasks();
+        final Collection<Task> epics = manager.getEpics();
+        final Collection<Task> subtasks = manager.getSubtasks();
 
         assertAll("Менеджер должен вернуть созданные задачи",
                 () -> assertTrue(epics.contains(epic)),
@@ -168,7 +168,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.updateTask(task);
 
         assertEquals(Status.IN_PROGRESS, task.getStatus());
-        assertTrue(manager.getAllTasks().contains(task));
+        assertTrue(manager.getTasks().contains(task));
     }
 
     @Test
@@ -182,10 +182,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals("Задачи под номером " + id + " нет в списке задач", exception.getMessage());
 
         manager.createTask(uncreatedTask);
-        assertTrue(manager.getAllTasks().contains(uncreatedTask));
+        assertTrue(manager.getTasks().contains(uncreatedTask));
 
         manager.removeTask(id);
-        assertFalse(manager.getAllTasks().contains(uncreatedTask));
+        assertFalse(manager.getTasks().contains(uncreatedTask));
     }
 
     @Test
@@ -198,12 +198,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(2, subtasksFromEpic.size());
 
         final NoSuchElementException exception = assertThrows(NoSuchElementException.class,
-                () -> manager.getSubtasksOfEpic(uncreatedEpic)
+                () -> manager.getSubtasksOfEpic(uncreatedEpic.getId())
         );
         assertEquals("Такого эпика нет в списке задач", exception.getMessage());
 
         manager.createTask(uncreatedEpic);
-        Collection<Task> subtasksFromManager = manager.getSubtasksOfEpic(uncreatedEpic);
+        Collection<Task> subtasksFromManager = manager.getSubtasksOfEpic(uncreatedEpic.getId());
 
         assertEquals(subtasksFromEpic.size(), subtasksFromManager.size(), "Количество подзадач не совпадает");
 

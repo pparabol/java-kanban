@@ -8,7 +8,9 @@ import model.Task;
 import util.Status;
 import util.TaskType;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.file = new File(path);
     }
 
-    private void save() throws ManagerSaveException {
+    public void save() throws ManagerSaveException {
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write("id,type,name,status,description,start,duration,epic");
 

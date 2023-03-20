@@ -15,7 +15,7 @@ public final class FileManagerLoader {
     }
 
     public static FileBackedTasksManager loadFromFile(String path) throws ManagerLoadException {
-        FileBackedTasksManager manager = (FileBackedTasksManager) Managers.getDefault(path);
+        FileBackedTasksManager manager = new FileBackedTasksManager(Managers.getDefaultHistory(), path);
         try {
             String[] data = Files.readAllLines(Path.of(path)).toArray(new String[0]);
             int i = 1;

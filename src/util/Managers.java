@@ -1,10 +1,12 @@
 package util;
 
-import manager.FileBackedTasksManager;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
 import manager.history.HistoryManager;
 import manager.history.InMemoryHistoryManager;
+import server.HttpTaskManager;
+
+import java.io.IOException;
 
 public final class Managers {
 
@@ -19,8 +21,7 @@ public final class Managers {
         return new InMemoryHistoryManager();
     }
 
-    public static TaskManager getDefault(String path) {
-        return new FileBackedTasksManager(getDefaultHistory(), path);
+    public static TaskManager getDefault(String url) throws IOException, InterruptedException {
+        return new HttpTaskManager(getDefaultHistory(), url);
     }
-
 }

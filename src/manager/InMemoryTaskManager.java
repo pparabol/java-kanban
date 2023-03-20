@@ -1,9 +1,9 @@
 package manager;
 
 import manager.history.HistoryManager;
+import model.Epic;
 import model.Subtask;
 import model.Task;
-import model.Epic;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
@@ -43,8 +43,8 @@ public class InMemoryTaskManager implements TaskManager {
         return prioritizedTasks;
     }
 
-   @Override
-    public Collection<Task> getAllTasks() {
+    @Override
+    public Collection<Task> getTasks() {
         ArrayList<Task> taskList = new ArrayList<>();
         if (tasks.isEmpty()) {
             System.out.println("Список задач пуст");
@@ -55,7 +55,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Collection<Task> getAllEpics() {
+    public Collection<Task> getEpics() {
         ArrayList<Task> taskList = new ArrayList<>();
         if (epics.isEmpty()) {
             System.out.println("Список эпиков пуст");
@@ -66,7 +66,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Collection<Task> getAllSubtasks() {
+    public Collection<Task> getSubtasks() {
         ArrayList<Task> taskList = new ArrayList<>();
         if (subtasks.isEmpty()) {
             System.out.println("Список подзадач пуст");
@@ -188,10 +188,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Collection<Task> getSubtasksOfEpic(Task task) throws NoSuchElementException {
-        Epic epic = (Epic) task;
+    public Collection<Task> getSubtasksOfEpic(int id) throws NoSuchElementException {
         List<Task> subtasksOfEpic;
-        if (epics.containsValue(epic)) {
+        if (epics.containsKey(id)) {
+            Epic epic = (Epic) epics.get(id);
             subtasksOfEpic = epic.getSubtasks();
         } else {
              throw new NoSuchElementException("Такого эпика нет в списке задач");
@@ -214,5 +214,8 @@ public class InMemoryTaskManager implements TaskManager {
             isOverlapping = isCovering || isOverlappingByEnd || isOverlappingByStart || isWithin;
         }
         return isOverlapping;
+    }
+    public boolean isTaskPresent(Task task) {
+        return tasks.containsValue(task) || epics.containsValue(task) || subtasks.containsValue(task);
     }
 }

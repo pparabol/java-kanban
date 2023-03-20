@@ -18,12 +18,12 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @BeforeEach
     void setManager() {
-        manager = (FileBackedTasksManager) Managers.getDefault("src/file/data.csv");
+        manager = new FileBackedTasksManager(Managers.getDefaultHistory(), "src/file/data.csv");
     }
 
     @Test
     void shouldThrowManagerSaveExceptionWhenInvalidPath() {
-        manager = (FileBackedTasksManager) Managers.getDefault(" ");
+        manager = new FileBackedTasksManager(Managers.getDefaultHistory(), " ");
         Task task = new Task("Task", "checkSaveException", manager.getId());
 
         final ManagerSaveException exception = assertThrows(ManagerSaveException.class,

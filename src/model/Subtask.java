@@ -18,13 +18,13 @@ public class Subtask extends Task {
     @Override
     public void setDuration(long minutes) {
         super.setDuration(minutes);
-        epic.getDuration();
+        epic.setDuration(epic.getDuration().toMinutes());
     }
 
     @Override
     public void setStartTime(LocalDateTime startTime) {
         super.setStartTime(startTime);
-        epic.getStartTime();
+        epic.setStartTime(epic.getStartTime());
     }
 
     public int getEpicId() {
@@ -40,7 +40,7 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return "Subtask{" +
-                "epic.id=" + epic.getId() +
+                "epic.id=" + getEpicId() +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +

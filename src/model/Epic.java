@@ -9,34 +9,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
-    private final List<Task> subtasks;
+    private final List<Integer> subtasksIds;
     private LocalDateTime endTime;
 
     public Epic(String title, String description, int id) {
         super(title, description, id);
-        subtasks = new ArrayList<>();
+        subtasksIds = new ArrayList<>();
         type = TaskType.EPIC;
+        duration = getDuration();
+        startTime = getStartTime();
+        endTime = getEndTime();
     }
 
     @Override
     public Duration getDuration() {
-        this.duration = Duration.ofMinutes(0);
-        if (!subtasks.isEmpty()) {
-            subtasks.forEach(subtask -> this.duration = duration.plus(subtask.getDuration()));
+        Duration duration = Duration.ofMinutes(0);
+        if (!subtasksIds.isEmpty()) {
+            subtasks.forEach(subtask -> duration.plus(subtask.getDuration()));
         }
         return duration;
     }
 
     @Override
     public LocalDateTime getStartTime() {
-        if (subtasks.isEmpty()) return this.startTime = null;
+        if (subtasks.isEmpty()) return null;
 
-        int counter = 0;
+        /*int counter = 0;
         for (Task subtask : subtasks) {
             if (subtask.getStartTime() == null) counter++;
-        }
+        }*/
 
-        if (counter >= 1) return this.startTime = null;
+        int counter = (int) subtasks.stream().filter(subtask -> subtask.getStartTime() == null).count();
+        if (counter >= 1) return null;
 
         LocalDateTime start = subtasks.get(0).getStartTime();
         for (int i = 1; i < subtasks.size(); i++) {
@@ -45,13 +49,13 @@ public class Epic extends Task {
                 start = checker;
             }
         }
-        return this.startTime = start;
+        return start;
     }
 
     @Override
     public LocalDateTime getEndTime() {
         if (subtasks.isEmpty()) {
-            return this.endTime = null;
+            return null;
         }
 
         LocalDateTime end = subtasks.get(0).getEndTime();
@@ -61,15 +65,15 @@ public class Epic extends Task {
                 end = checker;
             }
         }
-        return this.endTime = end;
+        return end;
     }
 
-    public void setSubtasks(Task subtask) {
-        subtasks.add(subtask);
+    public void setSubtasksIds(int id) {
+        subtasksIds.add(id);
     }
 
-    public List<Task> getSubtasks() {
-        return subtasks;
+    public List<Integer> getSubtasksIds() {
+        return subtasksIds;
     }
 
     @Override
@@ -100,7 +104,7 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return "Epic{" +
-                "subtasks.size()=" + subtasks.size() +
+                "subtasksIds=" + subtasksIds +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
