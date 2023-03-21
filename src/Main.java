@@ -1,20 +1,20 @@
-import com.google.gson.Gson;
-import manager.TaskManager;
+import api.HttpTaskServer;
+import api.KVServer;
+import manager.HttpTaskManager;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-import server.KVServer;
 import util.Managers;
 
 import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         new KVServer().start();
-        Gson gson = new Gson();
 
-        TaskManager httpManager = Managers.getDefault("http://localhost:8078");
+        HttpTaskManager httpManager = (HttpTaskManager) Managers.getDefault("http://localhost:8078");
+        new HttpTaskServer(httpManager).start();
 
         httpManager.createTask(new Task("Кино", "Купить билеты", httpManager.getId()));
         httpManager.createTask(new Task("Проект", "Написать рабочий код", httpManager.getId()));
@@ -32,31 +32,11 @@ public class Main {
         httpManager.getTaskById(3);
         httpManager.getTaskById(4);
 
+        httpManager = (HttpTaskManager) Managers.getDefault("http://localhost:8078");
+        httpManager.loadFromServer();
 
-
-        System.out.println(gson.toJson(httpManager.getTasks()));
-        System.out.println(gson.toJson(httpManager.getSubtasks()));
-
-
-
-        /* String str = "tasks/task/?id=3";
-        String[] arr = str.split("/");
-        System.out.println(arr[arr.length-1]);
-        if (arr[arr.length - 1].startsWith("?id")) {
-            System.out.println("yes");
-        } else {
-            System.out.println("no");
-        }
-
-        int id = Integer.parseInt(arr[arr.length - 1].split("=")[1]);
-        System.out.println(id);*/
-
-        /*HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/task/?id=1");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());*/
-
-        //new KVServer().start();
-
+        System.out.println(httpManager.getEpics());
+        System.out.println(httpManager.getHistory());
+        System.out.println(httpManager.getPrioritizedTasks());
     }
 }

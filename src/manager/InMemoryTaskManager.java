@@ -14,8 +14,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> tasks;
     protected final Map<Integer, Task> epics;
     protected final Map<Integer, Task> subtasks;
-    public final HistoryManager historyManager;
-    private final Set<Task> prioritizedTasks;
+    protected final HistoryManager historyManager;
+    protected final Set<Task> prioritizedTasks;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         tasks = new HashMap<>();
@@ -41,6 +41,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Set<Task> getPrioritizedTasks() {
         return prioritizedTasks;
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 
     @Override
@@ -215,6 +220,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return isOverlapping;
     }
+    @Override
     public boolean isTaskPresent(Task task) {
         return tasks.containsValue(task) || epics.containsValue(task) || subtasks.containsValue(task);
     }

@@ -106,7 +106,7 @@ class EpicTest {
         Subtask sub2 = new Subtask("Subtask1", "description", manager.getId(), epic);
         sub1.setStartTime(LocalDateTime.now());
         sub1.setDuration(60);
-        sub2.setStartTime(LocalDateTime.of(2024, 5, 25, 5, 45));
+        sub2.setStartTime(LocalDateTime.of(2029, 5, 25, 5, 45));
         sub2.setDuration(60);
 
         assertAll(

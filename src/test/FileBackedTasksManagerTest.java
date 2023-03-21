@@ -42,7 +42,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
         FileBackedTasksManager fM = FileManagerLoader.loadFromFile("src/file/data.csv");
         final Task loadedEpic = fM.getTaskById(id);
-        final Collection<Task> history = fM.historyManager.getHistory();
+        final Collection<Task> history = fM.getHistory();
 
         assertAll(
                 () -> assertNotNull(loadedEpic, "Задача не найдена"),

@@ -9,6 +9,8 @@ public interface TaskManager {
 
     Collection<Task> getPrioritizedTasks();
 
+    Collection<Task> getHistory();
+
     Collection<Task> getTasks();
 
     Collection<Task> getEpics();
@@ -30,4 +32,5 @@ public interface TaskManager {
     void removeTask(int id);
 
     Collection<Task> getSubtasksOfEpic(int id);
+    boolean isTaskPresent(Task task);
 }

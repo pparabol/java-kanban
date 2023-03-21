@@ -1,4 +1,4 @@
-package server;
+package api;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,12 +11,12 @@ public class KVTaskClient {
     private final String serverUrl;
     private final String apiToken;
 
-    public KVTaskClient(String serverUrl) throws IOException, InterruptedException {
+    public KVTaskClient(String serverUrl) {
         this.serverUrl = serverUrl;
         apiToken = getApiToken();
     }
 
-    private String getApiToken() throws IOException, InterruptedException {
+    private String getApiToken() {
         URI url = URI.create(serverUrl + "/register");
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -25,8 +25,14 @@ public class KVTaskClient {
                 .build();
 
         HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Во время выполнения запроса возникла ошибка.\n" +
+                    "Проверьте, пожалуйста, адрес и повторите попытку.");
+        }
+        return "ERROR";
     }
 
     public void put(String key, String json) {
@@ -43,8 +49,6 @@ public class KVTaskClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
                 System.out.println("Что-то пошло не так. Сервер вернул код состояния: " + response.statusCode());
-            } else {
-                System.out.println("Данные успешно сохранены");
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Во время выполнения запроса возникла ошибка.\n" +

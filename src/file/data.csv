@@ -1,10 +1,4 @@
 id,type,name,status,description,start,duration,epic
-1,TASK,Кино,NEW,Купить билеты,Not stated,0
-2,TASK,Проект,NEW,Написать рабочий код,Not stated,0
-3,EPIC,Важный эпик,NEW,Много дел,Not stated,0
-7,EPIC,Очень важный эпик,NEW,Куча дел,Not stated,0
-4,SUBTASK,Кот,NEW,Покормить кота,Not stated,0,3
-5,SUBTASK,Пёс,NEW,Погладить собаку,Not stated,0,3
-6,SUBTASK,Суши,NEW,Заказать доставку,Not stated,0,3
+1,EPIC,Epic,NEW,checkLoading,Not stated,0
 
-5,3,4,1
+1

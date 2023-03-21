@@ -1,4 +1,4 @@
-package server;
+package api;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -128,5 +128,9 @@ public class KVServer {
 		h.getResponseHeaders().add("Content-Type", "application/json");
 		h.sendResponseHeaders(200, resp.length);
 		h.getResponseBody().write(resp);
+	}
+
+	public void stop() {
+		server.stop(1);
 	}
 }

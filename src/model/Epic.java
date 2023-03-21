@@ -9,23 +9,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
-    private final List<Integer> subtasksIds;
-    private LocalDateTime endTime;
+    private final List<Task> subtasks;
+    private final LocalDateTime endTime;
 
     public Epic(String title, String description, int id) {
         super(title, description, id);
-        subtasksIds = new ArrayList<>();
+        subtasks = new ArrayList<>();
         type = TaskType.EPIC;
-        duration = getDuration();
         startTime = getStartTime();
         endTime = getEndTime();
     }
 
     @Override
     public Duration getDuration() {
-        Duration duration = Duration.ofMinutes(0);
-        if (!subtasksIds.isEmpty()) {
-            subtasks.forEach(subtask -> duration.plus(subtask.getDuration()));
+        this.duration = Duration.ofMinutes(0);
+        if (!subtasks.isEmpty()) {
+            subtasks.forEach(subtask -> this.duration = duration.plus(subtask.getDuration()));
         }
         return duration;
     }
@@ -33,11 +32,6 @@ public class Epic extends Task {
     @Override
     public LocalDateTime getStartTime() {
         if (subtasks.isEmpty()) return null;
-
-        /*int counter = 0;
-        for (Task subtask : subtasks) {
-            if (subtask.getStartTime() == null) counter++;
-        }*/
 
         int counter = (int) subtasks.stream().filter(subtask -> subtask.getStartTime() == null).count();
         if (counter >= 1) return null;
@@ -68,12 +62,12 @@ public class Epic extends Task {
         return end;
     }
 
-    public void setSubtasksIds(int id) {
-        subtasksIds.add(id);
+    public void setSubtasks(Task task) {
+        subtasks.add(task);
     }
 
-    public List<Integer> getSubtasksIds() {
-        return subtasksIds;
+    public List<Task> getSubtasks() {
+        return subtasks;
     }
 
     @Override
@@ -104,7 +98,7 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return "Epic{" +
-                "subtasksIds=" + subtasksIds +
+                "subtasks.size()=" + subtasks.size() +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
