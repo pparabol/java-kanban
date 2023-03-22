@@ -1,5 +1,6 @@
 package util;
 
+import api.KVTaskClient;
 import manager.HttpTaskManager;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
@@ -20,6 +21,6 @@ public final class Managers {
     }
 
     public static TaskManager getDefault(String url) {
-        return new HttpTaskManager(getDefaultHistory(), url);
+        return new HttpTaskManager(getDefaultHistory(), url, new KVTaskClient(url));
     }
 }

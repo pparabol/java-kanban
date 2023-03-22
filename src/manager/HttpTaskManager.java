@@ -18,9 +18,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     private final KVTaskClient taskClient;
 
-    public HttpTaskManager(HistoryManager historyManager, String url) {
+    public HttpTaskManager(HistoryManager historyManager, String url, KVTaskClient taskClient) {
         super(historyManager, url);
-        taskClient = new KVTaskClient(url);
+        this.taskClient = taskClient;
     }
 
     @Override

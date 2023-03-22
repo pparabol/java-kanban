@@ -50,11 +50,11 @@ public class HttpTaskServer {
         server.stop(1);
     }
 
-    static class TasksHandler implements HttpHandler {
+    private static class TasksHandler implements HttpHandler {
 
         private final TaskManager manager;
 
-        public TasksHandler (TaskManager manager) {
+        public TasksHandler(TaskManager manager) {
             this.manager = manager;
         }
 

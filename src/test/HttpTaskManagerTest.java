@@ -5,6 +5,7 @@ import manager.HttpTaskManager;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
 
+    private static KVServer server;
     @BeforeAll
     static void startServer() throws IOException {
-        new KVServer().start();
+        server = new KVServer();
+        server.start();
     }
 
     @BeforeEach
@@ -54,5 +57,10 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
                 () -> assertEquals(subtask, manager.getTaskById(subtask.getId()),
                         "Подзадача не загрузилась")
         );
+    }
+
+    @AfterAll
+    static void stopServer() {
+        server.stop();
     }
 }
