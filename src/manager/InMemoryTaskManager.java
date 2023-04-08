@@ -50,65 +50,45 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Collection<Task> getTasks() {
-        ArrayList<Task> taskList = new ArrayList<>();
-        if (tasks.isEmpty()) {
-            System.out.println("Список задач пуст");
-        } else {
-            taskList.addAll(tasks.values());
-        }
-        return taskList;
+        return new ArrayList<>(tasks.values());
     }
 
     @Override
     public Collection<Task> getEpics() {
-        ArrayList<Task> taskList = new ArrayList<>();
-        if (epics.isEmpty()) {
-            System.out.println("Список эпиков пуст");
-        } else {
-            taskList.addAll(epics.values());
-        }
-        return taskList;
+        return new ArrayList<>(epics.values());
+
     }
 
     @Override
     public Collection<Task> getSubtasks() {
-        ArrayList<Task> taskList = new ArrayList<>();
-        if (subtasks.isEmpty()) {
-            System.out.println("Список подзадач пуст");
-        } else {
-            taskList.addAll(subtasks.values());
-        }
-        return taskList;
+        return new ArrayList<>(subtasks.values());
     }
 
     @Override
     public void removeAllTasks() {
         if (tasks.isEmpty()) {
-            System.out.println("В этой категории нет задач");
-        } else {
-            prioritizedTasks.removeAll(tasks.values());
-            tasks.clear();
+            return;
         }
+        prioritizedTasks.removeAll(tasks.values());
+        tasks.clear();
     }
 
     @Override
     public void removeAllEpics() {
         if (epics.isEmpty()) {
-            System.out.println("В этой категории нет задач");
-        } else {
-            prioritizedTasks.removeAll(epics.values());
-            epics.clear();
+            return;
         }
+        prioritizedTasks.removeAll(epics.values());
+        epics.clear();
     }
 
     @Override
     public void removeAllSubtasks() {
         if (subtasks.isEmpty()) {
-            System.out.println("В этой категории нет задач");
-        } else {
-            prioritizedTasks.removeAll(subtasks.values());
-            subtasks.clear();
+            return;
         }
+        prioritizedTasks.removeAll(subtasks.values());
+        subtasks.clear();
     }
 
    @Override
@@ -194,14 +174,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Collection<Task> getSubtasksOfEpic(int id) throws NoSuchElementException {
-        List<Task> subtasksOfEpic;
-        if (epics.containsKey(id)) {
-            Epic epic = (Epic) epics.get(id);
-            subtasksOfEpic = epic.getSubtasks();
-        } else {
-             throw new NoSuchElementException("Такого эпика нет в списке задач");
+        if (!epics.containsKey(id)) {
+            throw new NoSuchElementException("Такого эпика нет в списке задач");
         }
-        return subtasksOfEpic;
+        Epic epic = (Epic) epics.get(id);
+        return epic.getSubtasks();
     }
 
     private boolean isOverlapping(Task task) {
